@@ -10,7 +10,9 @@ const app = express();
 app.use(cors({
   origin: [
     'https://mednlaw-admin-frontend.vercel.app',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://www.mednlaw.com',
+    'https://mednlaw.com',
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],
