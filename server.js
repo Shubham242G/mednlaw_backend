@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-pp.use(cors({
+app.use(cors({
   origin: [
     'https://mednlaw-admin-frontend.vercel.app',
     'http://localhost:3000'
