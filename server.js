@@ -53,6 +53,10 @@ try {
   console.log('Loading testimonials routes...');
   app.use('/api/testimonials', require('./routes/testimonials'));
   console.log('✅ Testimonials routes loaded');
+
+  console.log('Loading faq routes...');
+  app.use('/api/faq', require('./routes/faq'));
+  console.log('✅ FAQ routes loaded');
   
   console.log('Loading news routes...');
   app.use('/api/news', require('./routes/news'));
@@ -62,8 +66,13 @@ try {
 }
 
 // Add this debug route BEFORE the 404 handler
+// Add this DEBUG route to see all registered routes (SAFE VERSION)
 app.get('/debug-routes', (req, res) => {
   const routesList = [];
+  
+  if (!app._router || !app._router.stack) {
+    return res.json({ error: 'Cannot access router stack' });
+  }
   
   // Collect all registered routes
   app._router.stack.forEach((layer) => {
@@ -73,19 +82,24 @@ app.get('/debug-routes', (req, res) => {
         path: layer.route.path,
         methods: Object.keys(layer.route.methods)
       });
-    } else if (layer.name === 'router') {
+    } else if (layer.name === 'router' && layer.handle && layer.handle.stack) {
       // Routes registered with app.use()
-      const basePath = layer.regexp.source
-        .replace('\\/?(?=\\/|$)', '')
-        .replace(/\\\//g, '/')
-        .replace(/\^/g, '')
-        .replace(/\?/g, '')
-        .replace(/\(\?:\(\[\^\\\/\]\+\?\)\)/g, ':param');
+      let basePath = '';
+      if (layer.regexp) {
+        const source = layer.regexp.source;
+        basePath = source
+          .replace('\\/?(?=\\/|$)', '')
+          .replace(/\\\//g, '/')
+          .replace(/\^/g, '')
+          .replace(/\?/g, '')
+          .replace(/\(\?:\(\[\^\\\/\]\+\?\)\)/g, ':param');
+      }
       
       layer.handle.stack.forEach((subLayer) => {
         if (subLayer.route) {
+          const fullPath = (basePath + subLayer.route.path).replace(/\/\//g, '/');
           routesList.push({
-            path: (basePath + subLayer.route.path).replace(/\/\//g, '/'),
+            path: fullPath,
             methods: Object.keys(subLayer.route.methods)
           });
         }
@@ -100,28 +114,8 @@ app.get('/debug-routes', (req, res) => {
   });
 });
 
-app.get('/api/direct-test', (req, res) => {
-  res.json({ message: 'Direct test route works!' });
-});
 
-// 404 handler - keep this at the end
-app.use((req, res) => {
-  console.log(`❌ 404 - ${req.method} ${req.originalUrl}`);
-  res.status(404).json({ 
-    message: 'Route not found',
-    requestedUrl: req.originalUrl,
-    method: req.method
-  });
-});
 
-// 404 handler
-app.use((req, res) => {
-  console.log(`❌ 404 - Route not found: ${req.method} ${req.originalUrl}`);
-  res.status(404).json({ 
-    message: 'Route not found',
-    requestedUrl: req.originalUrl 
-  });
-});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -6,6 +6,7 @@ const BlogSchema = new mongoose.Schema({
   slug: { type: String, unique: true, sparse: true }, // ADD THIS
   summary: { type: String, required: true, maxlength: 500 },
   content: { type: String, default: '' },
+  faqs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'FAQ' }],
   images: [{ type: String }],
   seoFocusKeyword: { type: String, default: '' },
   seoTitle: { type: String, default: '' },
