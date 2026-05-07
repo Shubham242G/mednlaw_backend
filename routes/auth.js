@@ -4,6 +4,13 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+router.get('/test', (req, res) => {
+  res.json({ 
+    message: 'Auth routes are working!',
+    timestamp: new Date().toISOString()
+  });
+});
+
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
