@@ -17,6 +17,7 @@ app.use(cors({
     'https://www.mednlaw.com',
     'https://mednlaw.com',
     'https://mednlaw.in',
+    'https://www.mednlaw.in',
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],
