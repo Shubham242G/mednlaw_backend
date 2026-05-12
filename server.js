@@ -9,6 +9,17 @@ const app = express();
 console.log('🚀 Starting server...');
 
 // Middleware
+
+app.use((req, res, next) => {
+  console.log('📨 Incoming request:', {
+    method: req.method,
+    url: req.url,
+    origin: req.headers.origin,
+    headers: req.headers
+  });
+  next();
+});
+
 app.use(cors({
   origin: [
     'https://mednlaw-admin-frontend.vercel.app',
